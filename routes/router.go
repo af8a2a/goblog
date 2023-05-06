@@ -9,7 +9,7 @@ import (
 func InitRouter() {
 	gin.SetMode(util.AppMode)
 	r := gin.Default()
-	router := r.Group("controller/v1")
+	router := r.Group("api/v1")
 	{
 		router.GET("hello", func(c *gin.Context) {
 			c.JSON(http.StatusOK, gin.H{
