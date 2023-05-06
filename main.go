@@ -1,7 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"goblog/routes"
+)
 
 func main() {
-	fmt.Println("hello")
+	routes.InitRouter()
 }
