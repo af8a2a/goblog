@@ -11,7 +11,7 @@ import (
 type User struct {
 	gorm.Model
 	Username string `gorm:"type:varchar(20);not null " json:"username" validate:"required,min=4,max=12" label:"用户名"`
-	Password string `gorm:"type:varchar(500);not null" json:"password" validate:"required,min=6,max=120" label:"密码"`
+	Password string `gorm:"type:varchar(500);not null" json:"password" validate:"required,min=6,max=20" label:"密码"`
 	Role     int    `gorm:"type:int;DEFAULT:2" json:"role" validate:"required,gte=2" label:"角色码"`
 }
 
@@ -27,10 +27,10 @@ func CheckUser(name string) (code int) {
 
 // 新增用户
 func CreateUser(data *User) int {
-	data.Password = ScryptPw(data.Password)
+	//data.Password = ScryptPw(data.Password)
 	err := db.Create(&data).Error
 	if err != nil {
-		return errmsg.ERROR
+		return errmsg.ERROR // 500
 	}
 	return errmsg.SUCCSE
 }
@@ -81,7 +81,7 @@ func CheckLogin(username string, password string) int {
 	if ScryptPw(password) != user.Password {
 		return errmsg.ERROR_PASSWORD_WRONG
 	}
-	if user.Role != 0 {
+	if user.Role != 1 {
 		return errmsg.ERROR_USER_NO_RIGHT
 	}
 	return errmsg.SUCCSE
