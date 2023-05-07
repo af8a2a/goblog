@@ -11,7 +11,8 @@ import (
 func InitRouter() {
 	gin.SetMode(util.AppMode)
 	r := gin.Default()
-
+	r.Use(middleware.Loggoer())
+	r.Use(gin.Recovery())
 	auth := r.Group("api/v1")
 	auth.Use(middleware.JwtToken())
 	{
