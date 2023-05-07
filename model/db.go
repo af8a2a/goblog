@@ -35,7 +35,7 @@ func InitDb() {
 		fmt.Println("connect to db fail", err)
 		os.Exit(1)
 	}
-	//_ = db.AutoMigrate(&User{}, &Article{}, &Category{}, Profile{}, Comment{})
+	_ = db.AutoMigrate(&User{}, &Article{}, &Category{}, Profile{}, Comment{})
 
 	sqlDB, _ := db.DB()
 	sqlDB.SetMaxIdleConns(10)
