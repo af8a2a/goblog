@@ -8,20 +8,20 @@ import (
 	"strconv"
 )
 
-var code int
+// 查询分类名是否存在
 
-// 添加用户
-func AddUser(c *gin.Context) {
-	//todo 添加用户
-	var data model.User
+// 添加分类
+func AddCategory(c *gin.Context) {
+	var data model.Category
 	_ = c.ShouldBindJSON(&data)
-	code = model.CheckUser(data.Username)
+	code := model.CheckCategory(data.Name)
 	if code == errmsg.SUCCSE {
-		model.CreateUser(&data)
+		model.CreateCate(&data)
 	}
-	if code == errmsg.ERROR_USERNAME_USED {
-		code = errmsg.ERROR_USERNAME_USED
+	if code == errmsg.ERROR_CATENAME_USED {
+		code = errmsg.ERROR_CATENAME_USED
 	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"status":  code,
 		"data":    data,
@@ -29,10 +29,10 @@ func AddUser(c *gin.Context) {
 	})
 }
 
-// 查询单个用户
+// todo 查询单个分类下的文章
 
-// 查询用户列表
-func GetUsers(c *gin.Context) {
+// 查询分类列表
+func GetCate(c *gin.Context) {
 	pageSize, _ := strconv.Atoi(c.Query("pagesize"))
 	pageNum, _ := strconv.Atoi(c.Query("pagenum"))
 	if pageSize == 0 {
@@ -41,44 +41,43 @@ func GetUsers(c *gin.Context) {
 	if pageNum == 0 {
 		pageNum = -1
 	}
-	data := model.GetUser(pageSize, pageNum)
+	data := model.GetCate(pageSize, pageNum)
 	code = errmsg.SUCCSE
-	c.JSON(code, gin.H{
+	c.JSON(http.StatusOK, gin.H{
 		"status":  code,
 		"data":    data,
 		"message": errmsg.GetErrMsg(code),
 	})
-
 }
 
-// 编辑用户
-func EditUser(c *gin.Context) {
-	var data model.User
+// 编辑分类
+func EditCate(c *gin.Context) {
+	var data model.Category
 	id, _ := strconv.Atoi(c.Param("id"))
 	_ = c.ShouldBindJSON(&data)
-	code = model.CheckUser(data.Username)
-	//重命名的名字不能重复
+	code = model.CheckCategory(data.Name)
 	if code == errmsg.SUCCSE {
-		model.EditUser(id, &data)
+		model.EditCate(id, &data)
 	}
-	if code == errmsg.ERROR_USERNAME_USED {
+	if code == errmsg.ERROR_CATENAME_USED {
 		c.Abort()
 	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"status":  code,
 		"message": errmsg.GetErrMsg(code),
 	})
+
 }
 
-// 删除用户
-func DeleteUser(c *gin.Context) {
+// 删除分类
+func DeleteCate(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 
-	code = model.Delete(id)
+	code = model.Deletecate(id)
 
 	c.JSON(http.StatusOK, gin.H{
 		"status":  code,
 		"message": errmsg.GetErrMsg(code),
 	})
-
 }
