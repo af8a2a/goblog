@@ -13,6 +13,7 @@ func InitRouter() {
 	r := gin.Default()
 	r.Use(middleware.Loggoer())
 	r.Use(gin.Recovery())
+	r.Use(middleware.Cors())
 	auth := r.Group("api/v1")
 	auth.Use(middleware.JwtToken())
 	{
@@ -28,11 +29,13 @@ func InitRouter() {
 		auth.PUT("article/:id", v1.EditArt)
 		auth.DELETE("article/:id", v1.DeleteArt)
 		auth.POST("upload", v1.UpLoad)
+		auth.PUT("resetpass", v1.GetPass)
 
 	}
 	router := r.Group("api/v1")
 	{
 		router.POST("user/add", v1.AddUser)
+		router.GET("user/:id", v1.GetUserInfo)
 		router.GET("users", v1.GetUsers)
 		router.GET("category", v1.GetCate)
 		router.GET("article", v1.GetArt)

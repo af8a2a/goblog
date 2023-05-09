@@ -25,9 +25,19 @@ func CheckUser(name string) (code int) {
 	return errmsg.SUCCSE
 }
 
+// 查询用户
+func GetUser(id int) (User, int) {
+	var user User
+	err := db.Where("ID = ?", id).First(&user).Error
+	if err != nil {
+		return user, errmsg.ERROR
+	}
+	return user, errmsg.SUCCSE
+}
+
 // 新增用户
 func CreateUser(data *User) int {
-	//data.Password = ScryptPw(data.Password)
+	data.Password = ScryptPw(data.Password)
 	err := db.Create(&data).Error
 	if err != nil {
 		return errmsg.ERROR // 500
@@ -37,13 +47,46 @@ func CreateUser(data *User) int {
 
 // 查询用户列表
 
-func GetUser(pageSize int, pageNum int) []User {
-	var user []User
-	err := db.Limit(pageSize).Offset((pageNum - 1) * pageSize).Find(&user).Error
-	if err != nil && err != gorm.ErrRecordNotFound {
-		return nil
+func GetUsers(username string, pageSize int, pageNum int) ([]User, int64) {
+	var users []User
+	var total int64
+	var user User
+	db.Model(&user).Count(&total)
+	if username == "" {
+		err = db.Limit(pageSize).Offset((pageNum - 1) * pageSize).Find(&users).Error
 	}
-	return user
+	err = db.Where("username LIKE ?", username+"%").Limit(pageSize).Offset((pageNum - 1) * pageSize).Find(&users).Error
+
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return nil, 0
+	}
+	return users, total
+
+}
+
+// 重置密码
+func UpPass(id int, password string) int {
+	var user User
+	var maps = make(map[string]string)
+	maps["password"] = user.Password
+	err = db.Model(&user).Where("id = ?", id).Updates(maps).Error
+	if err != nil {
+		return errmsg.ERROR
+	}
+	return errmsg.SUCCSE
+}
+
+// 更新查询
+func CheckUpUser(id int, name string) (code int) {
+	var user User
+	db.Select("id, username").Where("username = ?", name).First(&user)
+	if user.ID == uint(id) {
+		return errmsg.SUCCSE
+	}
+	if user.ID > 0 {
+		return errmsg.ERROR_USERNAME_USED //1001
+	}
+	return errmsg.SUCCSE
 }
 
 // 编辑用户
@@ -52,7 +95,7 @@ func EditUser(id int, data *User) int {
 	var maps = make(map[string]interface{})
 	maps["username"] = data.Username
 	maps["role"] = data.Role
-	err := db.Model(&user).Where("id=?", id).Updates(maps).Error
+	err = db.Model(&user).Where("id = ? ", id).Updates(maps).Error
 	if err != nil {
 		return errmsg.ERROR
 	}
@@ -60,7 +103,7 @@ func EditUser(id int, data *User) int {
 }
 
 // 删除
-func Delete(id int) int {
+func DeleteUser(id int) int {
 	var user User
 	err := db.Where("id=?", id).Delete(&user).Error
 	if err != nil {
