@@ -2,7 +2,7 @@ package v1
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/wejectchen/ginblog/model"
+	"goblog/model"
 	"goblog/util/errmsg"
 	"net/http"
 	"strconv"

@@ -4,7 +4,8 @@ import (
 	"context"
 	"github.com/qiniu/go-sdk/v7/auth/qbox"
 	"github.com/qiniu/go-sdk/v7/storage"
-	"github.com/wejectchen/ginblog/utils"
+	utils "goblog/util"
+
 	"goblog/util/errmsg"
 	"mime/multipart"
 )

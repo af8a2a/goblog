@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-func Loggoer() gin.HandlerFunc {
+func Logger() gin.HandlerFunc {
 	filePath := "log/log"
 	linkName := "latest_log.log"
 

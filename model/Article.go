@@ -8,11 +8,13 @@ import (
 type Article struct {
 	Category Category `gorm:"foreignkey:Cid"`
 	gorm.Model
-	Title   string `gorm:"type:varchar(100);not null" json:"title"` //标题
-	Cid     int    `gorm:"type:int;not null" json:"cid"`            //分类
-	Desc    string `gorm:"type:varchar(200)" json:"desc"`           //描述
-	Content string `gorm:"type:longtext" json:"content"`            //内容
-	Img     string `gorm:"type:varchar(100)" json:"img"`            //图片
+	Title        string `gorm:"type:varchar(100);not null" json:"title"`
+	Cid          int    `gorm:"type:int;not null" json:"cid"`
+	Desc         string `gorm:"type:varchar(200)" json:"desc"`
+	Content      string `gorm:"type:longtext" json:"content"`
+	Img          string `gorm:"type:varchar(100)" json:"img"`
+	CommentCount int    `gorm:"type:int;not null;default:0" json:"comment_count"`
+	ReadCount    int    `gorm:"type:int;not null;default:0" json:"read_count"`
 }
 
 // 新增文章
@@ -25,14 +27,18 @@ func CreateArt(data *Article) int {
 }
 
 // 查询分类下的所有文章
-func GetCateArt(id int, pageSize int, pageNum int) ([]Article, int, int) {
+func GetCateArt(id int, pageSize int, pageNum int) ([]Article, int, int64) {
 	var cateArtList []Article
-	var total int
-	err := db.Preload("Category").Limit(pageSize).Offset((pageNum-1)*pageSize).Where("cid =?", id).Find(&cateArtList).Error
+	var total int64
+
+	err = db.Preload("Category").Limit(pageSize).Offset((pageNum-1)*pageSize).Where(
+		"cid =?", id).Find(&cateArtList).Error
+	db.Model(&cateArtList).Where("cid =?", id).Count(&total)
 	if err != nil {
 		return nil, errmsg.ERROR_CATE_NOT_EXIST, 0
 	}
 	return cateArtList, errmsg.SUCCSE, total
+
 }
 
 // 查询单个文章
@@ -56,6 +62,25 @@ func GetArt(pageSize int, pageNum int) ([]Article, int, int64) {
 	}
 	return articleList, errmsg.SUCCSE, total
 
+}
+
+// SearchArticle 搜索文章标题
+func SearchArticle(title string, pageSize int, pageNum int) ([]Article, int, int64) {
+	var articleList []Article
+	var err error
+	var total int64
+	err = db.Select("article.id,title, img, created_at, updated_at, `desc`, comment_count, read_count, Category.name").Order("Created_At DESC").Joins("Category").Where("title LIKE ?",
+		title+"%",
+	).Limit(pageSize).Offset((pageNum - 1) * pageSize).Find(&articleList).Error
+	//单独计数
+	db.Model(&articleList).Where("title LIKE ?",
+		title+"%",
+	).Count(&total)
+
+	if err != nil {
+		return nil, errmsg.ERROR, 0
+	}
+	return articleList, errmsg.SUCCSE, total
 }
 
 // 编辑文章
