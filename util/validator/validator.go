@@ -30,5 +30,5 @@ func Validate(data any) (string, int) {
 			return v.Translate(trans), errmsg.ERROR
 		}
 	}
-	return "", errmsg.SUCCSE
+	return "", errmsg.SUCCESS
 }

@@ -10,16 +10,16 @@ import (
 
 // 查询分类名是否存在
 
-// 添加分类
+// AddCategory 添加分类
 func AddCategory(c *gin.Context) {
 	var data model.Category
 	_ = c.ShouldBindJSON(&data)
 	code := model.CheckCategory(data.Name)
-	if code == errmsg.SUCCSE {
+	if code == errmsg.SUCCESS {
 		model.CreateCate(&data)
 	}
-	if code == errmsg.ERROR_CATENAME_USED {
-		code = errmsg.ERROR_CATENAME_USED
+	if code == errmsg.ErrorCatenameUsed {
+		code = errmsg.ErrorCatenameUsed
 	}
 
 	c.JSON(http.StatusOK, gin.H{
@@ -29,7 +29,7 @@ func AddCategory(c *gin.Context) {
 	})
 }
 
-// 查询分类列表
+// GetCate 查询分类列表
 func GetCate(c *gin.Context) {
 	pageSize, _ := strconv.Atoi(c.Query("pagesize"))
 	pageNum, _ := strconv.Atoi(c.Query("pagenum"))
@@ -46,7 +46,7 @@ func GetCate(c *gin.Context) {
 	}
 
 	data, total := model.GetCate(pageSize, pageNum)
-	code := errmsg.SUCCSE
+	code := errmsg.SUCCESS
 	c.JSON(
 		http.StatusOK, gin.H{
 			"status":  code,
@@ -57,16 +57,16 @@ func GetCate(c *gin.Context) {
 	)
 }
 
-// 编辑分类
+// EditCate 编辑分类
 func EditCate(c *gin.Context) {
 	var data model.Category
 	id, _ := strconv.Atoi(c.Param("id"))
 	_ = c.ShouldBindJSON(&data)
 	code = model.CheckCategory(data.Name)
-	if code == errmsg.SUCCSE {
+	if code == errmsg.SUCCESS {
 		model.EditCate(id, &data)
 	}
-	if code == errmsg.ERROR_CATENAME_USED {
+	if code == errmsg.ErrorCatenameUsed {
 		c.Abort()
 	}
 
@@ -93,7 +93,7 @@ func GetCateInfo(c *gin.Context) {
 
 }
 
-// 删除分类
+// DeleteCate 删除分类
 func DeleteCate(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 

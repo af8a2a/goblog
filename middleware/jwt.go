@@ -33,7 +33,7 @@ func SetToken(username string) (string, int) {
 	if err != nil {
 		return "", errmsg.ERROR
 	}
-	return token, errmsg.SUCCSE
+	return token, errmsg.SUCCESS
 
 }
 
@@ -48,22 +48,22 @@ func CheckToken(token string) (*MyClaims, int) {
 	if err != nil {
 		if ve, ok := err.(*jwt.ValidationError); ok { //官方写法招抄就行
 			if ve.Errors&jwt.ValidationErrorMalformed != 0 {
-				return nil, errmsg.ERROR_TOKEN_WRONG
+				return nil, errmsg.ErrorTokenWrong
 			} else if ve.Errors&(jwt.ValidationErrorExpired|jwt.ValidationErrorNotValidYet) != 0 {
-				return nil, errmsg.ERROR_TOKEN_RUNTIME
+				return nil, errmsg.ErrorTokenRuntime
 			} else {
-				return nil, errmsg.ERROR_TOKEN_TYPE_WRONG
+				return nil, errmsg.ErrorTokenTypeWrong
 			}
 		}
 	}
 	if setToken != nil {
 		if key, ok := setToken.Claims.(*MyClaims); ok && setToken.Valid {
-			return key, errmsg.SUCCSE
+			return key, errmsg.SUCCESS
 		} else {
-			return nil, errmsg.ERROR_TOKEN_WRONG
+			return nil, errmsg.ErrorTokenWrong
 		}
 	}
-	return nil, errmsg.ERROR_TOKEN_WRONG
+	return nil, errmsg.ErrorTokenWrong
 }
 
 // jwt中间件
@@ -71,7 +71,7 @@ func JwtToken() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		tokenHeader := c.Request.Header.Get("Authorization")
 		if tokenHeader == "" {
-			code = errmsg.ERROR_TOKEN_EXIST
+			code = errmsg.ErrorTokenExist
 			c.Abort()
 			c.JSON(http.StatusOK, gin.H{
 				"code":    code,
@@ -80,7 +80,7 @@ func JwtToken() gin.HandlerFunc {
 		}
 		checkToken := strings.Split(tokenHeader, " ")
 		if len(checkToken) == 0 {
-			code = errmsg.ERROR_TOKEN_TYPE_WRONG
+			code = errmsg.ErrorTokenTypeWrong
 			c.JSON(http.StatusOK, gin.H{
 				"code":    code,
 				"message": errmsg.GetErrMsg(code),
@@ -90,7 +90,7 @@ func JwtToken() gin.HandlerFunc {
 		}
 
 		if len(checkToken) != 2 && checkToken[0] != "Bearer" {
-			code = errmsg.ERROR_TOKEN_TYPE_WRONG
+			code = errmsg.ErrorTokenTypeWrong
 			c.JSON(http.StatusOK, gin.H{
 				"code":    code,
 				"message": errmsg.GetErrMsg(code),
@@ -99,7 +99,7 @@ func JwtToken() gin.HandlerFunc {
 			return
 		}
 		key, tCode := CheckToken(checkToken[1])
-		if tCode != errmsg.SUCCSE {
+		if tCode != errmsg.SUCCESS {
 			code = tCode
 			c.JSON(http.StatusOK, gin.H{
 				"code":    code,

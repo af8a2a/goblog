@@ -15,34 +15,34 @@ type User struct {
 	Role     int    `gorm:"type:int;DEFAULT:2" json:"role" validate:"required,gte=2" label:"角色码"`
 }
 
-// 查询用户是否存在
+// CheckUser 查询用户是否存在
 func CheckUser(name string) (code int) {
 	var user User
 	db.Select("id").Where("username= ?", name).First(&user)
 	if user.ID > 0 {
-		return errmsg.ERROR_USERNAME_USED
+		return errmsg.ErrorUsernameUsed
 	}
-	return errmsg.SUCCSE
+	return errmsg.SUCCESS
 }
 
-// 查询用户
+// GetUser 查询用户
 func GetUser(id int) (User, int) {
 	var user User
 	err := db.Where("ID = ?", id).First(&user).Error
 	if err != nil {
 		return user, errmsg.ERROR
 	}
-	return user, errmsg.SUCCSE
+	return user, errmsg.SUCCESS
 }
 
-// 新增用户
+// CreateUser 新增用户
 func CreateUser(data *User) int {
 	data.Password = ScryptPw(data.Password)
 	err := db.Create(&data).Error
 	if err != nil {
 		return errmsg.ERROR // 500
 	}
-	return errmsg.SUCCSE
+	return errmsg.SUCCESS
 }
 
 // 查询用户列表
@@ -64,7 +64,7 @@ func GetUsers(username string, pageSize int, pageNum int) ([]User, int64) {
 
 }
 
-// 重置密码
+// UpPass 重置密码
 func UpPass(id int, password string) int {
 	var user User
 	var maps = make(map[string]string)
@@ -73,23 +73,23 @@ func UpPass(id int, password string) int {
 	if err != nil {
 		return errmsg.ERROR
 	}
-	return errmsg.SUCCSE
+	return errmsg.SUCCESS
 }
 
-// 更新查询
+// CheckUpUser 更新查询
 func CheckUpUser(id int, name string) (code int) {
 	var user User
 	db.Select("id, username").Where("username = ?", name).First(&user)
 	if user.ID == uint(id) {
-		return errmsg.SUCCSE
+		return errmsg.SUCCESS
 	}
 	if user.ID > 0 {
-		return errmsg.ERROR_USERNAME_USED //1001
+		return errmsg.ErrorUsernameUsed //1001
 	}
-	return errmsg.SUCCSE
+	return errmsg.SUCCESS
 }
 
-// 编辑用户
+// EditUser 编辑用户
 func EditUser(id int, data *User) int {
 	var user User
 	var maps = make(map[string]interface{})
@@ -99,17 +99,17 @@ func EditUser(id int, data *User) int {
 	if err != nil {
 		return errmsg.ERROR
 	}
-	return errmsg.SUCCSE
+	return errmsg.SUCCESS
 }
 
-// 删除
+// DeleteUser 删除
 func DeleteUser(id int) int {
 	var user User
 	err := db.Where("id=?", id).Delete(&user).Error
 	if err != nil {
 		return errmsg.ERROR
 	}
-	return errmsg.SUCCSE
+	return errmsg.SUCCESS
 }
 
 // ChangePassword 修改密码
@@ -122,28 +122,28 @@ func ChangePassword(id int, data *User) int {
 	if err != nil {
 		return errmsg.ERROR
 	}
-	return errmsg.SUCCSE
+	return errmsg.SUCCESS
 }
 
-// 登录验证
+// CheckLogin 登录验证
 func CheckLogin(username string, password string) int {
 	var user User
 
 	db.Where("username = ?", username).First(&user)
 
 	if user.ID == 0 {
-		return errmsg.ERROR_USER_NOT_EXIST
+		return errmsg.ErrorUserNotExist
 	}
 	if ScryptPw(password) != user.Password {
-		return errmsg.ERROR_PASSWORD_WRONG
+		return errmsg.ErrorPasswordWrong
 	}
 	if user.Role != 1 {
-		return errmsg.ERROR_USER_NO_RIGHT
+		return errmsg.ErrorUserNoRight
 	}
-	return errmsg.SUCCSE
+	return errmsg.SUCCESS
 }
 
-// 密码加密
+// ScryptPw 密码加密
 func ScryptPw(password string) string {
 	const KeyLen = 10
 	salt := make([]byte, 8)

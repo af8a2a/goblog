@@ -21,7 +21,7 @@ func AddComment(data *Comment) int {
 	if err != nil {
 		return errmsg.ERROR
 	}
-	return errmsg.SUCCSE
+	return errmsg.SUCCESS
 }
 
 // GetComment 查询单个评论
@@ -31,7 +31,7 @@ func GetComment(id int) (Comment, int) {
 	if err != nil {
 		return comment, errmsg.ERROR
 	}
-	return comment, errmsg.SUCCSE
+	return comment, errmsg.SUCCESS
 }
 
 // GetCommentList 后台所有获取评论列表
@@ -43,7 +43,7 @@ func GetCommentList(pageSize int, pageNum int) ([]Comment, int64, int) {
 	if err != nil {
 		return commentList, 0, errmsg.ERROR
 	}
-	return commentList, total, errmsg.SUCCSE
+	return commentList, total, errmsg.SUCCESS
 
 }
 
@@ -65,7 +65,7 @@ func GetCommentListFront(id int, pageSize int, pageNum int) ([]Comment, int64, i
 	if err != nil {
 		return commentList, 0, errmsg.ERROR
 	}
-	return commentList, total, errmsg.SUCCSE
+	return commentList, total, errmsg.SUCCESS
 }
 
 // DeleteComment 删除评论
@@ -75,7 +75,7 @@ func DeleteComment(id uint) int {
 	if err != nil {
 		return errmsg.ERROR
 	}
-	return errmsg.SUCCSE
+	return errmsg.SUCCESS
 }
 
 // CheckComment 通过评论
@@ -91,7 +91,7 @@ func CheckComment(id int, data *Comment) int {
 	if err != nil {
 		return errmsg.ERROR
 	}
-	return errmsg.SUCCSE
+	return errmsg.SUCCESS
 }
 
 // UncheckComment 撤下评论
@@ -107,5 +107,5 @@ func UncheckComment(id int, data *Comment) int {
 	if err != nil {
 		return errmsg.ERROR
 	}
-	return errmsg.SUCCSE
+	return errmsg.SUCCESS
 }

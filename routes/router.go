@@ -99,7 +99,7 @@ func InitRouter() {
 		router.GET("commentcount/:id", v1.GetCommentCount)
 
 		//查询
-		router.GET("search/:title", v1.GetArt)
+		//router.GET("search/:title", v1.GetArt)
 	}
 
 	_ = r.Run(utils.HttpPort)

@@ -23,7 +23,7 @@ func GetProfile(id int) (Profile, int) {
 	if err != nil {
 		return profile, errmsg.ERROR
 	}
-	return profile, errmsg.SUCCSE
+	return profile, errmsg.SUCCESS
 }
 
 // UpdateProfile 更新个人信息设置
@@ -33,5 +33,5 @@ func UpdateProfile(id int, data *Profile) int {
 	if err != nil {
 		return errmsg.ERROR
 	}
-	return errmsg.SUCCSE
+	return errmsg.SUCCESS
 }

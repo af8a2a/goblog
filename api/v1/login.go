@@ -16,7 +16,7 @@ func Login(c *gin.Context) {
 	var code int
 	code = model.CheckLogin(data.Username, data.Password)
 	fmt.Println(code)
-	if code == errmsg.SUCCSE {
+	if code == errmsg.SUCCESS {
 		token, code = middleware.SetToken(data.Username)
 	}
 	c.JSON(http.StatusOK, gin.H{
@@ -35,7 +35,7 @@ func LoginFront(c *gin.Context) {
 	var code int
 	code = model.CheckLogin(data.Username, data.Password)
 	fmt.Println(code)
-	if code == errmsg.SUCCSE {
+	if code == errmsg.SUCCESS {
 		token, code = middleware.SetToken(data.Username)
 	}
 	c.JSON(http.StatusOK, gin.H{
