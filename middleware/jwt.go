@@ -3,7 +3,7 @@ package middleware
 import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	"github.com/wejectchen/ginblog/utils"
+	utils "goblog/util"
 	"goblog/util/errmsg"
 	"net/http"
 	"strings"

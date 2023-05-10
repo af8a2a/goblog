@@ -102,18 +102,6 @@ func EditUser(c *gin.Context) {
 	)
 
 }
-func GetPass(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
-	password := c.Param("password")
-
-	code = model.UpPass(id, password)
-	c.JSON(
-		http.StatusOK, gin.H{
-			"status":  code,
-			"message": errmsg.GetErrMsg(code),
-		},
-	)
-}
 
 // ChangeUserPassword 修改密码
 func ChangeUserPassword(c *gin.Context) {
