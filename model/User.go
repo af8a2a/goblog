@@ -112,6 +112,19 @@ func DeleteUser(id int) int {
 	return errmsg.SUCCSE
 }
 
+// ChangePassword 修改密码
+func ChangePassword(id int, data *User) int {
+	//var user User
+	//var maps = make(map[string]interface{})
+	//maps["password"] = data.Password
+
+	err = db.Select("password").Where("id = ?", id).Updates(&data).Error
+	if err != nil {
+		return errmsg.ERROR
+	}
+	return errmsg.SUCCSE
+}
+
 // 登录验证
 func CheckLogin(username string, password string) int {
 	var user User

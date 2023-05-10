@@ -33,20 +33,28 @@ func AddCategory(c *gin.Context) {
 func GetCate(c *gin.Context) {
 	pageSize, _ := strconv.Atoi(c.Query("pagesize"))
 	pageNum, _ := strconv.Atoi(c.Query("pagenum"))
-	if pageSize == 0 {
-		pageSize = -1
+
+	switch {
+	case pageSize >= 100:
+		pageSize = 100
+	case pageSize <= 0:
+		pageSize = 10
 	}
+
 	if pageNum == 0 {
-		pageNum = -1
+		pageNum = 1
 	}
+
 	data, total := model.GetCate(pageSize, pageNum)
-	code = errmsg.SUCCSE
-	c.JSON(http.StatusOK, gin.H{
-		"status":  code,
-		"data":    data,
-		"total":   total,
-		"message": errmsg.GetErrMsg(code),
-	})
+	code := errmsg.SUCCSE
+	c.JSON(
+		http.StatusOK, gin.H{
+			"status":  code,
+			"data":    data,
+			"total":   total,
+			"message": errmsg.GetErrMsg(code),
+		},
+	)
 }
 
 // 编辑分类
@@ -66,6 +74,22 @@ func EditCate(c *gin.Context) {
 		"status":  code,
 		"message": errmsg.GetErrMsg(code),
 	})
+
+}
+
+// GetCateInfo 查询分类信息
+func GetCateInfo(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+
+	data, code := model.GetCateInfo(id)
+
+	c.JSON(
+		http.StatusOK, gin.H{
+			"status":  code,
+			"data":    data,
+			"message": errmsg.GetErrMsg(code),
+		},
+	)
 
 }
 
