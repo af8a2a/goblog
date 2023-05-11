@@ -98,6 +98,8 @@ func InitRouter() {
 		router.GET("commentfront/:id", v1.GetCommentListFront)
 		router.GET("commentcount/:id", v1.GetCommentCount)
 
+		//router.POST("upload", v1.UpLoad)
+
 		//查询
 		//router.GET("search/:title", v1.GetArt)
 	}

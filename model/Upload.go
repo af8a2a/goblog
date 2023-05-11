@@ -2,10 +2,10 @@ package model
 
 import (
 	"context"
+	"fmt"
 	"github.com/qiniu/go-sdk/v7/auth/qbox"
 	"github.com/qiniu/go-sdk/v7/storage"
 	utils "goblog/util"
-
 	"goblog/util/errmsg"
 	"mime/multipart"
 )
@@ -21,9 +21,9 @@ func UploadFile(file multipart.File, fileSize int64) (string, int) {
 	}
 	mac := qbox.NewMac(AccessKey, SecretKey)
 	upToken := putPolicy.UploadToken(mac)
-
+	region, _ := storage.GetRegion(AccessKey, Bucket)
 	cfg := storage.Config{
-		Region:        &storage.ZoneHuadong,
+		Region:        region,
 		UseCdnDomains: false,
 		UseHTTPS:      false,
 	}
@@ -33,11 +33,12 @@ func UploadFile(file multipart.File, fileSize int64) (string, int) {
 	formUploader := storage.NewFormUploader(&cfg)
 	ret := storage.PutRet{}
 
-	err := formUploader.PutWithoutKey(context.Background(), &ret, upToken, file, fileSize, &putExtra)
+	err := formUploader.Put(context.Background(), &ret, upToken, "", file, fileSize, &putExtra)
 	if err != nil {
 		return "", errmsg.ERROR
 	}
 	url := ImgUrl + ret.Key
+	fmt.Println(url)
 	return url, errmsg.SUCCESS
 
 }

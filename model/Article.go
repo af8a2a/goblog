@@ -44,9 +44,17 @@ func GetCateArt(id int, pageSize int, pageNum int) ([]Article, int, int64) {
 // GetArtInfo 查询单个文章
 func GetArtInfo(id int) (Article, int) {
 	var art Article
+
 	err := db.Preload("Category").Where("id = ?", id).First(&art).Error
 	if err != nil {
 		return art, errmsg.ERROR_ART_NOT_EXIST
+	}
+	readcount := art.ReadCount + 1
+	var maps = make(map[string]interface{})
+	maps["read_count"] = readcount
+	err = db.Model(&art).Where("id = ? ", art.ID).Updates(maps).Error
+	if err != nil {
+		return art, errmsg.ERROR
 	}
 	return art, errmsg.SUCCSE
 }
@@ -70,11 +78,11 @@ func SearchArticle(title string, pageSize int, pageNum int) ([]Article, int, int
 	var err error
 	var total int64
 	err = db.Preload("Category").Where("title LIKE ?",
-		title+"%",
+		"%"+title+"%",
 	).Limit(pageSize).Offset((pageNum - 1) * pageSize).Find(&articleList).Error
 	//单独计数
 	db.Model(&articleList).Where("title LIKE ?",
-		title+"%",
+		"%"+title+"%",
 	).Count(&total)
 
 	if err != nil {

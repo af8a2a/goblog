@@ -41,7 +41,7 @@
         <template v-slot:activator="{ on, attrs }">
           <v-btn v-if="!headers.username" text dark v-bind="attrs" v-on="on">请登录</v-btn>
 
-          <v-btn v-if="headers.username" text dark>欢迎你{{ headers.username }}</v-btn>
+          <v-btn v-if="headers.username" text dark >欢迎你{{ headers.username }}</v-btn>
           <v-btn class="hidden-md-and-down" v-if="headers.username" text dark @click="loginout">退出</v-btn>
         </template>
 
